@@ -112,12 +112,23 @@ WeightedGraph::dijkstra(const std::string& source) const {
     //      pop (d, u) with min_heap.top() / min_heap.pop()
     while (!min_heap.empty())
     {
-        [auto d,u]=min_heap.top();
+        auto [d,u]=min_heap.top();
+        min_heap.pop();
         // 9. Stale-entry skip: if (d > dist[u]) continue;
         // 10. Relax every edge in adj_list_.at(u): compute new_dist = dist[u]
         //     + edge.weight; if new_dist < dist[edge.to], update dist[edge.to]
         //     and min_heap.push({new_dist, edge.to})
-        const int new dist=distu[u]
+        if (d>dist[u]) continue;
+        for (const auto& edge : adj_list_.at(u))
+        {
+            const int new_dist=dist[u] + edge.weight;
+            if (new_dist < dist[edge.to])
+            {
+                dist[edge.to] = new_dist;
+                min_heap.push({new_dist, edge.to});
+            }
+        }
+
     }
     return dist;
 }
